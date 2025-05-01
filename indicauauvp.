@@ -1,0 +1,31 @@
+# models.py
+from flask_sqlalchemy import SQLAlchemy
+from enum import Enum
+
+db = SQLAlchemy()
+
+class StatusIndicado(Enum):
+    CADASTRADO = "CADASTRADO"
+    COMPRA_REALIZADA = "COMPRA_REALIZADA"
+
+class Usuario(db.Model):
+    __tablename__ = 'usuarios'
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(255))
+    email = db.Column(db.String(255), unique=True)
+    senha_hash = db.Column(db.String(255))
+    is_admin = db.Column(db.Boolean, default=False)
+
+class Embaixador(db.Model):
+    __tablename__ = 'embaixadores'
+    id = db.Column(db.Integer, primary_key=True)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
+    pontuacao_total = db.Column(db.Integer, default=0)
+    link_referral = db.Column(db.String(100), unique=True)
+
+class Indicacao(db.Model):
+    __tablename__ = 'indicacoes'
+    id = db.Column(db.Integer, primary_key=True)
+    embaixador_id = db.Column(db.Integer, db.ForeignKey('embaixadores.id'))
+    indicado_email = db.Column(db.String(255))
+    status = db.Column(db.String(50), default="CADASTRADO")
